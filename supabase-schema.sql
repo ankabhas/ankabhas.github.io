@@ -16,6 +16,7 @@ CREATE TABLE habits (
     category TEXT NOT NULL CHECK (category IN ('health', 'fitness', 'productivity', 'learning', 'lifestyle')),
     target_value TEXT,
     unit TEXT,
+    max_value TEXT,   -- For duration: max minutes before "excessive". For time: max HH:MM before "excessive".
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
 );
@@ -29,6 +30,34 @@ CREATE TABLE habit_entries (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
     UNIQUE(habit_id, entry_date)
 );
+
+-- Milestones (weekly/periodic metrics like weight, body fat %)
+CREATE TABLE milestones (
+    id BIGSERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    goal_value NUMERIC,
+    goal_direction TEXT CHECK (goal_direction IN ('decrease', 'increase', 'maintain')),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
+);
+
+CREATE TABLE milestone_entries (
+    id BIGSERIAL PRIMARY KEY,
+    milestone_id BIGINT NOT NULL REFERENCES milestones(id) ON DELETE CASCADE,
+    entry_date DATE NOT NULL DEFAULT CURRENT_DATE,
+    value NUMERIC NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
+);
+
+CREATE INDEX idx_milestone_entries_milestone_id ON milestone_entries(milestone_id);
+CREATE INDEX idx_milestone_entries_date ON milestone_entries(entry_date);
+
+ALTER TABLE milestones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE milestone_entries ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Enable all access for milestones" ON milestones FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Enable all access for milestone_entries" ON milestone_entries FOR ALL USING (true) WITH CHECK (true);
 
 -- Create indexes for better performance
 CREATE INDEX idx_habits_created_at ON habits(created_at);

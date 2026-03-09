@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from 'recharts';
 import { TrendingUp, TrendingDown, Flame, Calendar, Award } from 'lucide-react';
 import { supabase } from '../App';
 
@@ -144,13 +144,15 @@ const Analytics = ({ habits }) => {
         return {
           date: dayName,
           value: entry ? parseInt(entry.value) : 0,
-          target: parseInt(habit.target_value) || 0
+          target: parseInt(habit.target_value) || 0,
+          max: habit.max_value ? parseInt(habit.max_value) : null
         };
       } else if (habit.type === 'time') {
         return {
           date: dayName,
           value: entry?.value ? convertTimeToMinutes(entry.value) : null,
-          label: entry?.value || 'No data'
+          label: entry?.value || 'No data',
+          max: habit.max_value ? convertTimeToMinutes(habit.max_value) : null
         };
       }
     });
@@ -247,20 +249,16 @@ const Analytics = ({ habits }) => {
       <div className="chart-container">
         <h3>Last 14 Days</h3>
         {selectedHabitData && (
-          <ResponsiveContainer width="100%" height={300}>
+          <ResponsiveContainer width="100%" height={260}>
             {selectedHabitData.type === 'boolean' ? (
-              <BarChart data={chartData}>
+              <BarChart data={chartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis domain={[0, 1]} ticks={[0, 1]} />
-                <Tooltip 
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                <YAxis domain={[0, 1]} ticks={[0, 1]} tick={{ fontSize: 11 }} />
+                <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
-                      return (
-                        <div className="custom-tooltip">
-                          <p>{payload[0].payload.label}</p>
-                        </div>
-                      );
+                      return <div className="custom-tooltip"><p>{payload[0].payload.label}</p></div>;
                     }
                     return null;
                   }}
@@ -268,36 +266,46 @@ const Analytics = ({ habits }) => {
                 <Bar dataKey="value" fill="#10b981" />
               </BarChart>
             ) : selectedHabitData.type === 'time' ? (
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={{ top: 4, right: 8, left: 10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis 
-                  tickFormatter={formatTimeFromMinutes}
-                />
-                <Tooltip 
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                <YAxis tickFormatter={formatTimeFromMinutes} tick={{ fontSize: 11 }} width={45} />
+                <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
-                      return (
-                        <div className="custom-tooltip">
-                          <p>{payload[0].payload.label}</p>
-                        </div>
-                      );
+                      return <div className="custom-tooltip"><p>{payload[0].payload.label}</p></div>;
                     }
                     return null;
                   }}
                 />
-                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} />
+                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} name="Logged" connectNulls />
+                {selectedHabitData.max_value && (
+                  <ReferenceLine
+                    y={convertTimeToMinutes(selectedHabitData.max_value)}
+                    stroke="#f59e0b"
+                    strokeDasharray="5 5"
+                    label={{ value: 'Max', position: 'right', fontSize: 11, fill: '#f59e0b' }}
+                  />
+                )}
               </LineChart>
             ) : (
-              <LineChart data={chartData}>
+              <LineChart data={chartData} margin={{ top: 4, right: 8, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} />
+                <YAxis tick={{ fontSize: 11 }} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} name="Actual" />
+                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} name="Actual" />
                 {selectedHabitData.target_value && (
-                  <Line type="monotone" dataKey="target" stroke="#ef4444" strokeWidth={2} strokeDasharray="5 5" name="Target" />
+                  <Line type="monotone" dataKey="target" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" name="Target" dot={false} />
+                )}
+                {selectedHabitData.max_value && (
+                  <ReferenceLine
+                    y={parseInt(selectedHabitData.max_value)}
+                    stroke="#f59e0b"
+                    strokeDasharray="5 5"
+                    label={{ value: 'Max', position: 'right', fontSize: 11, fill: '#f59e0b' }}
+                  />
                 )}
               </LineChart>
             )}

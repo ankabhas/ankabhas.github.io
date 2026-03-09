@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { Home, PlusCircle, BarChart3, Settings, Timer, Clock, Hash, Check, TrendingUp, Flame, Target, Calendar } from 'lucide-react';
+import { Home, PlusCircle, BarChart3, Trophy, Timer, Clock, Hash, Check, TrendingUp, Flame, Target, Calendar } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import Analytics from './components/Analytics';
 import HabitManager from './components/HabitManager';
+import MilestoneTracker from './components/MilestoneTracker';
 import PasswordGate from './components/PasswordGate';
 import './App.css';
 
@@ -93,6 +94,9 @@ function App() {
         {currentView === 'analytics' && (
           <Analytics habits={habits} />
         )}
+        {currentView === 'milestones' && (
+          <MilestoneTracker />
+        )}
       </main>
 
       <nav className="bottom-nav">
@@ -110,12 +114,19 @@ function App() {
           <PlusCircle size={24} />
           <span>Habits</span>
         </button>
-        <button 
+        <button
           className={`nav-item ${currentView === 'analytics' ? 'active' : ''}`}
           onClick={() => setCurrentView('analytics')}
         >
           <BarChart3 size={24} />
           <span>Progress</span>
+        </button>
+        <button
+          className={`nav-item ${currentView === 'milestones' ? 'active' : ''}`}
+          onClick={() => setCurrentView('milestones')}
+        >
+          <Trophy size={24} />
+          <span>Milestones</span>
         </button>
       </nav>
     </div>

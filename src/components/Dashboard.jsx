@@ -135,7 +135,16 @@ const Dashboard = ({ habits, entries, refreshData, loading }) => {
       <div className="habits-grid">
         {habits.map(habit => {
           const entry = getTodayEntry(habit.id);
-          const isCompleted = entry && (
+
+          const timeToMins = (t) => { const [h, m] = t.split(':'); return parseInt(h) * 60 + parseInt(m); };
+
+          const isExcessive = entry && habit.max_value && (
+            habit.type === 'duration' ? parseInt(entry.value) > parseInt(habit.max_value) :
+            habit.type === 'time' ? timeToMins(entry.value) > timeToMins(habit.max_value) :
+            false
+          );
+
+          const isCompleted = !isExcessive && entry && (
             habit.type === 'boolean' ? entry.value === '1' :
             habit.type === 'counter' ? parseInt(entry.value) >= parseInt(habit.target_value) :
             habit.type === 'duration' ? parseInt(entry.value) >= parseInt(habit.target_value) :
@@ -143,9 +152,9 @@ const Dashboard = ({ habits, entries, refreshData, loading }) => {
           );
 
           return (
-            <div 
-              key={habit.id} 
-              className={`habit-card ${isCompleted ? 'completed' : ''}`}
+            <div
+              key={habit.id}
+              className={`habit-card ${isCompleted ? 'completed' : ''} ${isExcessive ? 'excessive' : ''}`}
               style={{ '--habit-color': getHabitColor(habit.category) }}
             >
               <div className="habit-card-header">
@@ -155,8 +164,10 @@ const Dashboard = ({ habits, entries, refreshData, loading }) => {
                 <div className="habit-info">
                   <h3>{habit.name}</h3>
                   <span className="habit-category">{habit.category}</span>
+                  {isExcessive && <span className="excessive-label">⚠ Excessive</span>}
                 </div>
                 {isCompleted && <div className="completion-badge">✓</div>}
+                {isExcessive && <div className="excessive-badge">!</div>}
               </div>
 
               <div className="habit-card-body">

@@ -90,6 +90,8 @@ body {
   flex: 1;
   padding: 2rem 1.5rem 6rem;
   overflow-y: auto;
+  overflow-x: hidden;
+  min-width: 0;
 }
 
 /* Dashboard */
@@ -133,6 +135,35 @@ body {
 .habit-card.completed {
   border-color: var(--habit-color);
   background: linear-gradient(135deg, rgba(255, 255, 255, 1) 0%, rgba(var(--habit-color-rgb), 0.05) 100%);
+}
+
+.habit-card.excessive {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fff 0%, rgba(245, 158, 11, 0.06) 100%);
+}
+
+.excessive-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f59e0b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.excessive-label {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  margin-top: 0.25rem;
 }
 
 .habit-card-header {
@@ -828,11 +859,22 @@ body {
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
+.analytics {
+  width: 100%;
+  min-width: 0;
+}
+
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
   margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .stat-card {
@@ -883,6 +925,9 @@ body {
   border-radius: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 2rem;
+  overflow: hidden;
+  min-width: 0;
+  width: 100%;
 }
 
 .chart-container h3 {
@@ -1062,4 +1107,279 @@ body {
   color: #ef4444;
   font-size: 0.875rem;
   margin: 0.5rem 0 0;
+}
+
+/* ========================
+   Habit form helpers
+   ======================== */
+.label-hint {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #9ca3af;
+}
+
+.badge-warning {
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+}
+
+/* ========================
+   Milestone Tracker
+   ======================== */
+.milestone-tracker {
+  width: 100%;
+  min-width: 0;
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.milestone-header h2 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.milestone-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.milestone-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 50px;
+  background: #f3f4f6;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.milestone-pill.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.pill-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+  color: inherit;
+}
+
+.pill-delete:hover { opacity: 1; }
+
+/* Summary cards */
+.milestone-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 480px) {
+  .milestone-summary {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.ms-card {
+  background: white;
+  border-radius: 1rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.ms-label {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.ms-value {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1f2937;
+}
+
+.ms-value.trend-down { color: #10b981; }
+.ms-value.trend-up   { color: #ef4444; }
+
+.ms-progress-card { grid-column: span 2; }
+
+@media (min-width: 480px) {
+  .ms-progress-card { grid-column: span 1; }
+}
+
+.ms-progress-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: #e5e7eb;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.ms-progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.4s ease;
+}
+
+/* Log section */
+.milestone-log-section {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.milestone-log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.milestone-log-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.log-entry-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.log-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* History */
+.milestone-history {
+  background: white;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+}
+
+.milestone-history h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border-radius: 0.75rem;
+}
+
+.history-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.history-value {
+  font-weight: 700;
+  color: #1f2937;
+  font-size: 1rem;
+}
+
+.history-date {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.history-notes {
+  font-size: 0.8rem;
+  color: #6b7280;
+  font-style: italic;
+  flex: 1;
+}
+
+.no-entries {
+  color: #9ca3af;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* Direction selector */
+.direction-grid {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.direction-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.875rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #374151;
+  transition: all 0.2s;
+}
+
+.direction-option input { display: none; }
+
+.direction-option.selected {
+  border-color: #667eea;
+  background: rgba(102, 126, 234, 0.08);
+  color: #667eea;
+}
+
+/* Milestone detail */
+.milestone-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }

@@ -10,7 +10,8 @@ const HabitManager = ({ habits, refreshData }) => {
     type: 'boolean',
     category: 'health',
     target_value: '',
-    unit: ''
+    unit: '',
+    max_value: ''
   });
 
   const habitTypes = [
@@ -36,7 +37,8 @@ const HabitManager = ({ habits, refreshData }) => {
       type: formData.type,
       category: formData.category,
       target_value: formData.target_value || null,
-      unit: formData.unit || null
+      unit: formData.unit || null,
+      max_value: formData.max_value || null
     };
 
     if (editingId) {
@@ -67,7 +69,8 @@ const HabitManager = ({ habits, refreshData }) => {
       type: 'boolean',
       category: 'health',
       target_value: '',
-      unit: ''
+      unit: '',
+      max_value: ''
     });
     setShowForm(false);
     refreshData();
@@ -79,7 +82,8 @@ const HabitManager = ({ habits, refreshData }) => {
       type: habit.type,
       category: habit.category,
       target_value: habit.target_value || '',
-      unit: habit.unit || ''
+      unit: habit.unit || '',
+      max_value: habit.max_value || ''
     });
     setEditingId(habit.id);
     setShowForm(true);
@@ -109,7 +113,8 @@ const HabitManager = ({ habits, refreshData }) => {
       type: 'boolean',
       category: 'health',
       target_value: '',
-      unit: ''
+      unit: '',
+      max_value: ''
     });
   };
 
@@ -192,7 +197,7 @@ const HabitManager = ({ habits, refreshData }) => {
                 <div className="form-row">
                   <div className="form-group">
                     <label>Target {formData.type === 'duration' ? 'Minutes' : 'Value'}</label>
-                    <input 
+                    <input
                       type="number"
                       value={formData.target_value}
                       onChange={(e) => setFormData({ ...formData, target_value: e.target.value })}
@@ -204,7 +209,7 @@ const HabitManager = ({ habits, refreshData }) => {
                   {formData.type === 'counter' && (
                     <div className="form-group">
                       <label>Unit</label>
-                      <input 
+                      <input
                         type="text"
                         value={formData.unit}
                         onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
@@ -212,6 +217,40 @@ const HabitManager = ({ habits, refreshData }) => {
                       />
                     </div>
                   )}
+
+                  {formData.type === 'duration' && (
+                    <div className="form-group">
+                      <label>Max Minutes <span className="label-hint">(excessive above this)</span></label>
+                      <input
+                        type="number"
+                        value={formData.max_value}
+                        onChange={(e) => setFormData({ ...formData, max_value: e.target.value })}
+                        placeholder="e.g., 120"
+                        min="1"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {formData.type === 'time' && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Target Time <span className="label-hint">(goal to hit)</span></label>
+                    <input
+                      type="time"
+                      value={formData.target_value}
+                      onChange={(e) => setFormData({ ...formData, target_value: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Max Time <span className="label-hint">(excessive if later)</span></label>
+                    <input
+                      type="time"
+                      value={formData.max_value}
+                      onChange={(e) => setFormData({ ...formData, max_value: e.target.value })}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -245,6 +284,11 @@ const HabitManager = ({ habits, refreshData }) => {
                   {habit.target_value && (
                     <span className="badge">
                       Target: {habit.target_value} {habit.unit}
+                    </span>
+                  )}
+                  {habit.max_value && (
+                    <span className="badge badge-warning">
+                      Max: {habit.max_value}
                     </span>
                   )}
                 </div>
